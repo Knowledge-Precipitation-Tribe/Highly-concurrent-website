@@ -6,10 +6,9 @@ import (
 	"testing"
 )
 
-var product datamodels.Product
 
 func TestProductManager_Insert(t *testing.T) {
-	product = datamodels.Product{
+	product := &datamodels.Product{
 		ProductName:"test1",
 		ProductNum:5,
 		ProductImage:"test1",
@@ -26,6 +25,13 @@ func TestProductManager_Insert(t *testing.T) {
 }
 
 func TestProductManager_Update(t *testing.T) {
+	product := &datamodels.Product{
+		ID:7,
+		ProductName:"test1123",
+		ProductNum:5,
+		ProductImage:"test1123",
+		ProductUrl:"test1123",
+	}
 	product.ProductName = "test1"
 	productManager := &ProductManager{
 		table:"product",
@@ -40,7 +46,7 @@ func TestProductManager_SelectByKey(t *testing.T) {
 	productManager := &ProductManager{
 		table:"product",
 	}
-	product, err := productManager.SelectByKey(3)
+	product, err := productManager.SelectByKey(7)
 	if err != nil{
 		panic(err)
 	}
@@ -62,5 +68,5 @@ func TestProductManager_Delete(t *testing.T) {
 	productManager := &ProductManager{
 		table:"product",
 	}
-	productManager.Delete(4)
+	productManager.Delete(7)
 }

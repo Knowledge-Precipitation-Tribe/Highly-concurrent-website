@@ -58,6 +58,7 @@ func (p *ProductManager) Insert(product *datamodels.Product) (int64, error){
 	if err != nil{
 		return 0, err
 	}
+	product.ID, _ = result.LastInsertId()
 	return result.LastInsertId()
 }
 

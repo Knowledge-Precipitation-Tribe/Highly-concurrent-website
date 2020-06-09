@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-const tagName = "conSite"
+const tagName = "consite"
 
 // pathMap holds the values of a map with its key and values correspondent
 type pathMap struct {
@@ -40,7 +40,7 @@ type Error struct {
 }
 
 func (s *Error) Error() string {
-	return "conSite: " + s.err.Error()
+	return "consite: " + s.err.Error()
 }
 
 func (s Error) MarshalJSON() ([]byte, error) {
