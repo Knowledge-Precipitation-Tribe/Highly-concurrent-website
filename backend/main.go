@@ -1,7 +1,14 @@
 package main
 
 import (
+	"Highly-concurrent-website/backend/web/controllers"
+	"Highly-concurrent-website/common"
+	"Highly-concurrent-website/repositories"
+	"Highly-concurrent-website/services"
+	"context"
+	"fmt"
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/mvc"
 )
 
 func main() {
@@ -17,8 +24,23 @@ func main() {
 		ctx.ViewLayout("")
 		ctx.View("shared/error.html")
 	})
-	//注册控制器
+	//连接数据库
+	db, err := common.NewMysqlConn()
+	if err != nil{
+		fmt.Println(err)
+	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	//注册控制器
+	productRepository := repositories.NewProductManager(
+		"product",
+		db)
+	productService := services.NewProductService(productRepository)
+	productParty := app.Party("/product")
+	product := mvc.New(productParty)
+	product.Register(ctx, productService)
+	product.Handle(new(controllers.ProductController))
 	//启动服务
 	_ = app.Run(
 		iris.Addr("localhost:8080"),
