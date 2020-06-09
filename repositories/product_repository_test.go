@@ -10,9 +10,9 @@ var product datamodels.Product
 
 func TestProductManager_Insert(t *testing.T) {
 	product = datamodels.Product{
-		ProductName:"test",
+		ProductName:"test1",
 		ProductNum:5,
-		ProductImage:"test",
+		ProductImage:"test1",
 		ProductUrl:"test",
 	}
 	productManager := &ProductManager{
@@ -45,4 +45,22 @@ func TestProductManager_SelectByKey(t *testing.T) {
 		panic(err)
 	}
 	fmt.Println(product)
+}
+
+func TestProductManager_SelectAll(t *testing.T) {
+	productManager := &ProductManager{
+		table:"product",
+	}
+	products, err := productManager.SelectAll()
+	if err != nil{
+		panic(err)
+	}
+	fmt.Println(products)
+}
+
+func TestProductManager_Delete(t *testing.T) {
+	productManager := &ProductManager{
+		table:"product",
+	}
+	productManager.Delete(4)
 }

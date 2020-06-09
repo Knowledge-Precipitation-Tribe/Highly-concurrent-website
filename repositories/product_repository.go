@@ -21,9 +21,9 @@ type ProductManager struct {
 	mysqlConn *sql.DB
 }
 
-//func NewProductManager(table string, db *sql.DB) IProduct{
-//	return &ProductManager{table:table, mysqlConn:db}
-//}
+func NewProductManager(table string, db *sql.DB) IProduct{
+	return &ProductManager{table:table, mysqlConn:db}
+}
 
 //创建数据库连接
 func (p *ProductManager) Conn() error{
@@ -41,7 +41,7 @@ func (p *ProductManager) Conn() error{
 }
 
 //插入商品数据
-func (p *ProductManager) Insert(product datamodels.Product) (int64, error){
+func (p *ProductManager) Insert(product *datamodels.Product) (int64, error){
 	if err := p.Conn(); err != nil{
 		return 0, nil
 	}
@@ -79,7 +79,7 @@ func (p *ProductManager) Delete(productID int64) bool{
 }
 
 //更新商品信息
-func (p *ProductManager)Update(product datamodels.Product) error{
+func (p *ProductManager)Update(product *datamodels.Product) error{
 	if err := p.Conn(); err != nil{
 		return err
 	}
@@ -116,4 +116,29 @@ func (p *ProductManager) SelectByKey(productID int64)(*datamodels.Product, error
 	productResult := &datamodels.Product{}
 	common.DataToStructByTagSql(result, productResult)
 	return productResult, nil
+}
+
+//获取所有数据
+func (p *ProductManager) SelectAll()([]*datamodels.Product, error){
+	if err := p.Conn(); err != nil{
+		return nil, err
+	}
+	sql := "SELECT * FROM " + p.table
+	rows, err := p.mysqlConn.Query(sql)
+	defer rows.Close()
+	if err != nil{
+		return nil, err
+	}
+
+	result := common.GetResultRows(rows)
+	if len(result) == 0{
+		return nil, nil
+	}
+	productArray := make([]*datamodels.Product, 0)
+	for _, v := range result{
+		product :=  &datamodels.Product{}
+		common.DataToStructByTagSql(v, product)
+		productArray = append(productArray, product)
+	}
+	return productArray, nil
 }
