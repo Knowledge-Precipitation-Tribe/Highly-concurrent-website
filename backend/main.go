@@ -32,7 +32,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	//注册控制器
+	//product 注册控制器
 	productRepository := repositories.NewProductManager(
 		"product",
 		db)
@@ -41,6 +41,15 @@ func main() {
 	product := mvc.New(productParty)
 	product.Register(ctx, productService)
 	product.Handle(new(controllers.ProductController))
+
+	//order 注册控制器
+	orderRepository := repositories.NewOrderMangerRepository("website.table", db)
+	orderService := services.NewOrderService(orderRepository)
+	orderParty := app.Party("/order")
+	order := mvc.New(orderParty)
+	order.Register(ctx,orderService)
+	order.Handle(new(controllers.OrderController))
+
 	//启动服务
 	_ = app.Run(
 		iris.Addr("localhost:8080"),
