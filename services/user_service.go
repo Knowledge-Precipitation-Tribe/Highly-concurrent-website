@@ -45,6 +45,7 @@ func (u *UserService) AddUser(user *datamodels.User) (userId int64, err error) {
 	return u.UserRepository.Insert(user)
 }
 
+//对密码进行加密
 func GeneratePassword(userPassword string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(userPassword), bcrypt.DefaultCost)
 }
