@@ -9,6 +9,6 @@ type Order struct{
 
 const (
 	OrderWait = iota
-	orderSuccess //自增为1
+	OrderSuccess //自增为1
 	OrderFailed //自增为2
 )
