@@ -3,7 +3,6 @@ package controllers
 import (
 	"Highly-concurrent-website/datamodels"
 	"Highly-concurrent-website/services"
-	"fmt"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
@@ -19,8 +18,9 @@ type ProductController struct {
 
 
 func (p *ProductController) GetDetail() mvc.View {
-	id := p.Ctx.URLParam("productID")
-	fmt.Println("product_id", id)
+	//id := p.Ctx.URLParam("productID")
+	//fmt.Println("product_id", id)
+	//这里暂时写死ß
 	product, err := p.ProductService.GetProductByID(14)
 	if err != nil {
 		p.Ctx.Application().Logger().Error(err)
