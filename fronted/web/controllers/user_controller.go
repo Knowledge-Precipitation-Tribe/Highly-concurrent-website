@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"Highly-concurrent-website/datamodels"
+	"Highly-concurrent-website/encrypt"
 	"Highly-concurrent-website/services"
 	"Highly-concurrent-website/tool"
+	"fmt"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
 	"github.com/kataras/iris/sessions"
@@ -64,11 +66,15 @@ func (c *UserController) PostLogin() mvc.Response {
 			Path: "/user/login",
 		}
 	}
-
 	//3、写入用户ID到cookie中
 	tool.GlobalCookie(c.Ctx, "uid", strconv.FormatInt(user.ID, 10))
-	c.Session.Set("userID",strconv.FormatInt(user.ID,10))
-
+    uidByte := []byte(strconv.FormatInt(user.ID, 10))
+    uidString, err := encrypt.EnPwdCode(uidByte)
+    if err != nil{
+    	fmt.Println(err)
+	}
+    //将uid写入cookie
+	tool.GlobalCookie(c.Ctx, "sign", uidString)
 	return mvc.Response{
 		Path: "/product/",
 	}

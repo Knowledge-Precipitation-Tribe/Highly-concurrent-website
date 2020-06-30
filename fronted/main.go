@@ -9,8 +9,6 @@ import (
 	"context"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/mvc"
-	"github.com/kataras/iris/sessions"
-	"time"
 )
 
 func main() {
@@ -36,17 +34,18 @@ func main() {
 	if err != nil {
 
 	}
-	sess := sessions.New(sessions.Config{
-		Cookie:"AdminCookie",
-		Expires:600*time.Minute,
-	})
+	//sess := sessions.New(sessions.Config{
+	//	Cookie:"AdminCookie",
+	//	Expires:600*time.Minute,
+	//})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	user := repositories.NewUserRepository("user", db)
 	userService := services.NewService(user)
 	userPro := mvc.New(app.Party("/user"))
-	userPro.Register(userService, ctx,sess.Start)
+	//userPro.Register(userService, ctx,sess.Start)
+	userPro.Register(userService, ctx)
 	userPro.Handle(new(controllers.UserController))
 
 	//注册product控制器
