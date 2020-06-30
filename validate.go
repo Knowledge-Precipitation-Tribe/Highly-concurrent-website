@@ -41,7 +41,7 @@ func (m *AccessControl) GetNewRecord(uid int) interface{} {
 //设置记录
 func (m *AccessControl) SetNewRecord(uid int) {
 	m.RWMutex.Lock()
-	m.sourcesArray[uid]="hello imooc"
+	m.sourcesArray[uid]= string(uid) + "hello world"
 	m.RWMutex.Unlock()
 }
 
