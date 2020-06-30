@@ -8,6 +8,7 @@ import (
 	"sync"
 )
 
+//实现一致性哈希算法
 //声明新切片类型
 type units []uint32
 

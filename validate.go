@@ -3,6 +3,7 @@ package main
 import (
 	"Highly-concurrent-website/common"
 	"Highly-concurrent-website/encrypt"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -153,28 +154,28 @@ func CheckUserInfo(r *http.Request) error {
 	//获取Uid，cookie
 	uidCookie, err := r.Cookie("uid")
 	if err != nil {
-		//return errors.New("用户UID Cookie 获取失败！")
+		return errors.New("用户UID Cookie 获取失败！")
 	}
 	//获取用户加密串
 	signCookie, err := r.Cookie("sign")
 	if err != nil {
-		//return errors.New("用户加密串 Cookie 获取失败！")
+		return errors.New("用户加密串 Cookie 获取失败！")
 	}
 
 	//对信息进行解密
 	signByte, err := encrypt.DePwdCode(signCookie.Value)
 	if err != nil {
-		//return errors.New("加密串已被篡改！")
+		return errors.New("加密串已被篡改！")
 	}
 
 	//fmt.Println("结果比对")
 	//fmt.Println("用户ID：" + uidCookie.Value)
 	//fmt.Println("解密后用户ID：" + string(signByte))
 	if checkInfo(uidCookie.Value, string(signByte)) {
-		//return nil
+		return nil
 	}
-	//return errors.New("身份校验失败！")
-	return nil
+	return errors.New("身份校验失败！")
+	//return nil
 }
 
 //自定义逻辑判断
