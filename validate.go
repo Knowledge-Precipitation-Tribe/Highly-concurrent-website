@@ -12,7 +12,7 @@ import (
 )
 
 //设置集群地址，最好内外IP
-var hostArray= []string{"127.0.0.1","127.0.0.1"}
+var hostArray = []string{"127.0.0.1", "127.0.0.1"}
 
 var localHost = "127.0.0.1"
 
@@ -28,33 +28,33 @@ type AccessControl struct {
 }
 
 //创建全局变量
-var accessControl = &AccessControl{sourcesArray:make(map[int]interface{})}
+var accessControl = &AccessControl{sourcesArray: make(map[int]interface{})}
 
 //获取制定的数据
 func (m *AccessControl) GetNewRecord(uid int) interface{} {
 	m.RWMutex.RLock()
 	defer m.RWMutex.RUnlock()
-	data:=m.sourcesArray[uid]
+	data := m.sourcesArray[uid]
 	return data
 }
 
 //设置记录
 func (m *AccessControl) SetNewRecord(uid int) {
 	m.RWMutex.Lock()
-	m.sourcesArray[uid]= string(uid) + "hello world"
+	m.sourcesArray[uid] = string(uid) + "hello world"
 	m.RWMutex.Unlock()
 }
 
 func (m *AccessControl) GetDistributedRight(req *http.Request) bool {
 	//获取用户UID
-	uid ,err := req.Cookie("uid")
-	if err !=nil {
+	uid, err := req.Cookie("uid")
+	if err != nil {
 		return false
 	}
 
 	//采用一致性hash算法，根据用户ID，判断获取具体机器
-	hostRequest,err:=hashConsistent.Get(uid.Value)
-	if err !=nil {
+	hostRequest, err := hashConsistent.Get(uid.Value)
+	if err != nil {
 		return false
 	}
 
@@ -64,60 +64,60 @@ func (m *AccessControl) GetDistributedRight(req *http.Request) bool {
 		return m.GetDataFromMap(uid.Value)
 	} else {
 		//不是本机充当代理访问数据返回结果
-		return GetDataFromOtherMap(hostRequest,req)
+		return GetDataFromOtherMap(hostRequest, req)
 	}
 
 }
 
 //获取本机map，并且处理业务逻辑，返回的结果类型为bool类型
 func (m *AccessControl) GetDataFromMap(uid string) (isOk bool) {
-	uidInt,err := strconv.Atoi(uid)
-	if err !=nil {
+	uidInt, err := strconv.Atoi(uid)
+	if err != nil {
 		return false
 	}
-	data:=m.GetNewRecord(uidInt)
+	data := m.GetNewRecord(uidInt)
 
 	//执行逻辑判断
-	if data !=nil {
+	if data != nil {
 		return true
 	}
 	return
 }
 
 //获取其它节点处理结果
-func GetDataFromOtherMap(host string,request *http.Request) bool  {
+func GetDataFromOtherMap(host string, request *http.Request) bool {
 	//获取Uid
-	uidPre,err := request.Cookie("uid")
-	if err !=nil {
+	uidPre, err := request.Cookie("uid")
+	if err != nil {
 		return false
 	}
 	//获取sign
-	uidSign,err:=request.Cookie("sign")
-	if err !=nil {
-		return  false
+	uidSign, err := request.Cookie("sign")
+	if err != nil {
+		return false
 	}
 
 	//模拟接口访问，
-	client :=&http.Client{}
-	req,err:= http.NewRequest("GET","http://"+host+":"+port+"/check",nil)
-	if err !=nil {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "http://"+host+":"+port+"/check", nil)
+	if err != nil {
 		return false
 	}
 
 	//手动指定，排查多余cookies
-	cookieUid :=&http.Cookie{Name:"uid",Value:uidPre.Value,Path:"/"}
-	cookieSign :=&http.Cookie{Name:"sign",Value:uidSign.Value,Path:"/"}
+	cookieUid := &http.Cookie{Name: "uid", Value: uidPre.Value, Path: "/"}
+	cookieSign := &http.Cookie{Name: "sign", Value: uidSign.Value, Path: "/"}
 	//添加cookie到模拟的请求中
 	req.AddCookie(cookieUid)
 	req.AddCookie(cookieSign)
 
 	//获取返回结果
-	response,err :=client.Do(req)
-	if err !=nil {
+	response, err := client.Do(req)
+	if err != nil {
 		return false
 	}
-	body,err:=ioutil.ReadAll(response.Body)
-	if err !=nil {
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
 		return false
 	}
 
@@ -189,12 +189,11 @@ func checkInfo(checkStr string, signStr string) bool {
 func main() {
 	//负载均衡器设置
 	//采用一致性哈希算法
-	hashConsistent =common.NewConsistent()
+	hashConsistent = common.NewConsistent()
 	//采用一致性hash算法，添加节点
-	for _,v :=range hostArray {
+	for _, v := range hostArray {
 		hashConsistent.Add(v)
 	}
-
 
 	//1、过滤器
 	filter := common.NewFilter()

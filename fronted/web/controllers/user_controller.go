@@ -12,8 +12,8 @@ import (
 	"strconv"
 )
 
-type UserController struct{
-	Ctx iris.Context
+type UserController struct {
+	Ctx     iris.Context
 	Service services.IUserService
 	Session *sessions.Session
 }
@@ -68,12 +68,12 @@ func (c *UserController) PostLogin() mvc.Response {
 	}
 	//3、写入用户ID到cookie中
 	tool.GlobalCookie(c.Ctx, "uid", strconv.FormatInt(user.ID, 10))
-    uidByte := []byte(strconv.FormatInt(user.ID, 10))
-    uidString, err := encrypt.EnPwdCode(uidByte)
-    if err != nil{
-    	fmt.Println(err)
+	uidByte := []byte(strconv.FormatInt(user.ID, 10))
+	uidString, err := encrypt.EnPwdCode(uidByte)
+	if err != nil {
+		fmt.Println(err)
 	}
-    //将uid写入cookie
+	//将uid写入cookie
 	tool.GlobalCookie(c.Ctx, "sign", uidString)
 	return mvc.Response{
 		Path: "/product/",

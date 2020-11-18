@@ -31,14 +31,14 @@ type OrderMangerRepository struct {
 
 //连接数据库
 func (o *OrderMangerRepository) Conn() error {
-	if o.mysqlConn == nil{
+	if o.mysqlConn == nil {
 		mysql, err := common.NewMysqlConn()
-		if err != nil{
+		if err != nil {
 			return err
 		}
 		o.mysqlConn = mysql
 	}
-	if o.table == ""{
+	if o.table == "" {
 		o.table = "website.order"
 	}
 	return nil
@@ -46,39 +46,39 @@ func (o *OrderMangerRepository) Conn() error {
 
 //订单插入
 func (o *OrderMangerRepository) Insert(order *datamodels.Order) (productID int64, err error) {
-	if err = o.Conn(); err != nil{
+	if err = o.Conn(); err != nil {
 		return //与返回值相同直接返回
 	}
-	sql := "INSERT INTO "+ o.table +"(userID, productID, " +
+	sql := "INSERT INTO " + o.table + "(userID, productID, " +
 		"orderStatus) VALUES (?,?,?)"
 	stmt, errStmt := o.mysqlConn.Prepare(sql)
-	if errStmt != nil{
+	if errStmt != nil {
 		return productID, errStmt
 	}
 	result, errResult := stmt.Exec(order.UserID, order.ProductId, order.OrderStatus)
-	if errResult != nil{
+	if errResult != nil {
 		return productID, errResult
 	}
 	return result.LastInsertId()
 }
 
-func (o *OrderMangerRepository)Delete(orderID int64) (isOk bool)   {
-	if err :=o.Conn();err !=nil {
+func (o *OrderMangerRepository) Delete(orderID int64) (isOk bool) {
+	if err := o.Conn(); err != nil {
 		return
 	}
-	sql :="delete from "+o.table+" where ID =?"
-	stmt,errStmt:=o.mysqlConn.Prepare(sql)
-	if errStmt !=nil {
+	sql := "delete from " + o.table + " where ID =?"
+	stmt, errStmt := o.mysqlConn.Prepare(sql)
+	if errStmt != nil {
 		return
 	}
-	_,err := stmt.Exec(orderID)
-	if err !=nil {
+	_, err := stmt.Exec(orderID)
+	if err != nil {
 		return
 	}
 	return true
 }
 
-func (o *OrderMangerRepository)Update(order *datamodels.Order) (err error) {
+func (o *OrderMangerRepository) Update(order *datamodels.Order) (err error) {
 	if errConn := o.Conn(); errConn != nil {
 		return errConn
 	}
@@ -92,45 +92,45 @@ func (o *OrderMangerRepository)Update(order *datamodels.Order) (err error) {
 	return
 }
 
-func (o *OrderMangerRepository)SelectByKey (orderID int64) (order *datamodels.Order,err error)  {
+func (o *OrderMangerRepository) SelectByKey(orderID int64) (order *datamodels.Order, err error) {
 	if errConn := o.Conn(); errConn != nil {
-		return &datamodels.Order{},errConn
+		return &datamodels.Order{}, errConn
 	}
 
-	sql :="Select * From "+o.table+" where ID="+ strconv.FormatInt(orderID, 10)
-	row,errRow :=o.mysqlConn.Query(sql)
-	if errRow!=nil{
-		return &datamodels.Order{},errRow
+	sql := "Select * From " + o.table + " where ID=" + strconv.FormatInt(orderID, 10)
+	row, errRow := o.mysqlConn.Query(sql)
+	if errRow != nil {
+		return &datamodels.Order{}, errRow
 	}
 
 	result := common.GetResultRow(row)
 	if len(result) == 0 {
-		return &datamodels.Order{},err
+		return &datamodels.Order{}, err
 	}
 
 	order = &datamodels.Order{}
-	common.DataToStructByTagSql(result,order)
+	common.DataToStructByTagSql(result, order)
 	return
 }
 
-func (o *OrderMangerRepository)SelectAll ()(orderArray []*datamodels.Order,err error)  {
+func (o *OrderMangerRepository) SelectAll() (orderArray []*datamodels.Order, err error) {
 	if errConn := o.Conn(); errConn != nil {
-		return nil,errConn
+		return nil, errConn
 	}
-	sql:="Select * from "+o.table
-	rows ,errRows:=o.mysqlConn.Query(sql)
-	if errRows!=nil {
-		return nil,errRows
+	sql := "Select * from " + o.table
+	rows, errRows := o.mysqlConn.Query(sql)
+	if errRows != nil {
+		return nil, errRows
 	}
 	result := common.GetResultRows(rows)
 	if len(result) == 0 {
-		return nil ,err
+		return nil, err
 	}
 
-	for _,v :=range result{
-		order :=&datamodels.Order{}
-		common.DataToStructByTagSql(v,order)
-		orderArray=append(orderArray,order)
+	for _, v := range result {
+		order := &datamodels.Order{}
+		common.DataToStructByTagSql(v, order)
+		orderArray = append(orderArray, order)
 	}
 	return
 }

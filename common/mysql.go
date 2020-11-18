@@ -11,6 +11,7 @@ func NewMysqlConn() (db *sql.DB, err error) {
 	db, err = sql.Open("mysql", config.Datasource)
 	return
 }
+
 //获取返回值，获取一条
 func GetResultRow(rows *sql.Rows) map[string]string {
 	columns, _ := rows.Columns()

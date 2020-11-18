@@ -7,7 +7,7 @@ import (
 )
 
 type OrderController struct {
-	Ctx iris.Context
+	Ctx          iris.Context
 	OrderService services.IOrderService
 }
 

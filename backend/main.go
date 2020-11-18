@@ -26,7 +26,7 @@ func main() {
 	})
 	//连接数据库
 	db, err := common.NewMysqlConn()
-	if err != nil{
+	if err != nil {
 		fmt.Println(err)
 	}
 
@@ -47,12 +47,12 @@ func main() {
 	orderService := services.NewOrderService(orderRepository)
 	orderParty := app.Party("/order")
 	order := mvc.New(orderParty)
-	order.Register(ctx,orderService)
+	order.Register(ctx, orderService)
 	order.Handle(new(controllers.OrderController))
 
 	//启动服务
 	_ = app.Run(
 		iris.Addr("localhost:8080"),
 		iris.WithoutServerError(iris.ErrServerClosed),
-		iris.WithOptimizations, )
+		iris.WithOptimizations)
 }

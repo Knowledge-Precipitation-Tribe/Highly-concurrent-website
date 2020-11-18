@@ -7,15 +7,15 @@ import (
 
 func TestUserManagerRepository_Insert(t *testing.T) {
 	user := &datamodels.User{
-		NickName:"tom",
-		UserName:"Jack",
-		HashPassword:"2222",
+		NickName:     "tom",
+		UserName:     "Jack",
+		HashPassword: "2222",
 	}
 	userManager := &UserManagerRepository{
-		table:"user",
+		table: "user",
 	}
-	id ,err := userManager.Insert(user)
-	if err != nil{
+	id, err := userManager.Insert(user)
+	if err != nil {
 		panic(err)
 	}
 	user.ID = id
