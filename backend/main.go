@@ -32,6 +32,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
 	//product 注册控制器
 	productRepository := repositories.NewProductManager(
 		"product",

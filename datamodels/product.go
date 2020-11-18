@@ -1,5 +1,6 @@
 package datamodels
 
+//商品对应的model
 type Product struct {
 	ID           int64  `json:"id" sql:"ID" consite:"ID"`
 	ProductName  string `json:"ProductName" sql:"productName" consite:"ProductName"`

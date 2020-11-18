@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+// todo：采用gorm框架进行操作
 type IProduct interface {
 	Conn() error
 	Insert(product *datamodels.Product) (int64, error)
@@ -25,7 +26,7 @@ func NewProductManager(table string, db *sql.DB) IProduct {
 	return &ProductManager{table: table, mysqlConn: db}
 }
 
-//创建数据库连接
+//创建数据库连接，todo：改为连接池
 func (p *ProductManager) Conn() error {
 	if p.mysqlConn == nil {
 		mysql, err := common.NewMysqlConn()
